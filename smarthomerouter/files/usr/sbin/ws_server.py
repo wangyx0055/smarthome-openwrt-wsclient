@@ -1,6 +1,10 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 from __future__ import print_function
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 import websocket
 import pycurl
 import urllib
@@ -68,24 +72,52 @@ if __name__ == "__main__":
     	ws_obj_rsp["from"] = sn 
     	
     	data = {"msgtype":"statistic"}
-    	
-    	if islogin == 1:
-    		nmsg = 'LogIn: '
-    	elif islogin == 0:
-    		nmsg = 'LogOut: '
+    	info_msg = ''
     		
-    	nmsg += msg["devicetype"]
-    	nmsg += ','
-    	#nmsg = nmsg.join(msg["devicename"])
-    	nmsg += msg["devicename"]
-    	nmsg += ','
-    	nmsg += msg["ipaddr"]
-    	#nmsg = nmsg.join(msg["ipaddr"])
-    	nmsg += ','
-    	nmsg += msg["macaddr"]
+    	if islogin == 1:
+    		nmsg = '设备登陆:'
+    	elif islogin == 0:
+    		nmsg = '设备退出:'
+    		
+    	devtype = msg["devicetype"]
+        logger.debug("lizm devtype = %s",devtype)
+        
+        dev_maker = '设备制造商:'
+    	if devtype == '':
+    		dev_maker = ''
+    		maker_name = ''
+    	elif devtype == 'hp':
+    		maker_name = '惠普'	
+    	elif devtype == 'Lenovo':
+    		maker_name = '联想'
+    		
+    	info_msg += dev_maker
+    	info_msg += maker_name
+    	#info_msg += nmsg
+    	#info_msg += '\n'	
     	
-    	data["message"] = nmsg
+    	devname = msg["devicename"]
+    	if devname != '':
+    		info_msg += '设备名称:'
+    		info_msg += devname
+	    	info_msg += ','	
+	    	#info_msg += '\n'	
+    		
+    	ip = msg["ipaddr"]
+    	if ip != '':
+    		info_msg += 'IP地址:'
+    		info_msg += ip
+	    	info_msg += ','	
+#    		info_msg += '\n'	
+    		
+    	mac = msg["macaddr"]
+    	if mac != '':
+    		info_msg += '网卡地址:'
+    		info_msg += mac
+	    	info_msg += ','	
+#    		info_msg += '\n'	
     	
+    	data["message"] = info_msg 
     	ws_obj_rsp["data"] = data
     	ws_json_rsp = json.dumps(ws_obj_rsp)
     	ws.send(ws_json_rsp)
