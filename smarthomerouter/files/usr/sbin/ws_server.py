@@ -19,7 +19,6 @@ import threading
 from apitools import api_call 
 
 g_user_list = []
-tmp_user_list = []
 
 if __name__ == "__main__":
     websocket.enableTrace(True)
@@ -93,84 +92,12 @@ if __name__ == "__main__":
     	ws_obj_rsp["wsid"] = 888
     	ws_obj_rsp["from"] = sn 
     	
-    	data = {"msgtype":"statistic"}
-    	info_msg = ''
-    		
-    	if islogin == 1:
-    		nmsg = '有设备登陆到路由器:'
-    	elif islogin == 0:
-    		nmsg = '有设备从路由器断开:'
-    		
-    	info_msg += nmsg
+    	data = {"msgtype":"subdevstate"}
     	
-    	devtype = msg["devicetype"]
-        logger.debug("lizm devtype = %s",devtype)
-        
-        dev_maker = '制造商:'
-    	if devtype == '':
-    		dev_maker = ''
-    		maker_name = ''
-    	elif devtype == 'hp':
-    		maker_name = '惠普'	
-    	elif devtype == 'Lenovo':
-    		maker_name = '联想'
-    	elif devtype == 'xiaomi':
-    		maker_name = '小米'
-    	elif devtype == 'apple':
-    		maker_name = '苹果'
-    	elif devtype == 'samsung':
-    		maker_name = '三星'
-    	elif devtype == 'Nokia':
-    		maker_name = '诺基亚'
-    	elif devtype == 'HTC':
-    		maker_name = 'HTC'
-    	elif devtype == 'Sony': 
-    		maker_name = '索尼'
-    	elif devtype == 'huawei':
-    		maker_name = '华为'
-    	elif devtype == 'zte':
-    		maker_name = 'zte'
-    	elif devtype == 'Meizu':
-    		maker_name = '魅族'
-    	elif devtype == 'oppo':
-    		maker_name = 'oppo'
-    	elif devtype == 'asus':
-    		maker_name = 'asus'
-    	elif devtype == 'dell':
-    		maker_name = '戴尔'
-    	elif devtype == 'acer':
-    		maker_name = '宏基'
-    		
-    	info_msg += dev_maker
-    	info_msg += maker_name
-    	if devtype != '':
-	    	info_msg += ','
-    	
-    	devname = msg["devicename"]
-    	if devname != '':
-    		info_msg += '名称:'
-    		info_msg += devname
-	    	info_msg += ','	
-	    	#info_msg += '\n'	
-    		
-    	ip = msg["ipaddr"]
-    	if ip != '':
-    		info_msg += 'IP地址:'
-    		info_msg += ip
-	    	info_msg += ','	
-#    		info_msg += '\n'	
-    		
-    	mac = msg["macaddr"]
-    	if mac != '':
-    		info_msg += '网卡地址:'
-    		info_msg += mac
-#	    	info_msg += ','	
-#    		info_msg += '\n'	
-    	
-    	data["message"] = info_msg 
+    	data["islogin"] = islogin
+    	data["mac"] = msg["macaddr"]
     	ws_obj_rsp["data"] = data
     	ws_json_rsp = json.dumps(ws_obj_rsp)
-    	#ws.send(ws_json_rsp)
     	send_notification(ws_json_rsp)
     	
     	logger.debug("send notification = %s",ws_json_rsp)
@@ -180,7 +107,7 @@ if __name__ == "__main__":
     	while True:
     	    time.sleep(3)
     	    
-    	    logger.debug("send_notification_thread begin execute ")
+#    	    logger.debug("send_notification_thread begin execute ")
     	    
             api_json_rsp = api_call("net","get_network_associate_list","")
             api_obj_rsp = json.loads(api_json_rsp)
@@ -198,7 +125,7 @@ if __name__ == "__main__":
             	if found == 0:
             		g_user_list.append(result)		
             		logger.debug("Should notification mac  %s logger on",result["macaddr"])
-            		encode_device_state_notification(sn,1,result)
+            		encode_device_state_notification(sn,"1",result)
  			
             for j,y in enumerate(g_user_list):
             	found = 0 
@@ -208,10 +135,10 @@ if __name__ == "__main__":
             			break
             	if found == 0:
             		logger.debug("Should notification mac  %s logger off",y["macaddr"])
-            		send_notification_user_list.remove(y)
-            		encode_device_state_notification(sn,0,y)
+            		g_user_list.remove(y)
+            		encode_device_state_notification(sn,"0",y)
             	
-    	    logger.debug("send_notification end execute, and next loop after 3s ")
+#    	    logger.debug("send_notification end execute, and next loop after 3s ")
     	
     thread = threading.Thread(target=send_notification_thread)
     thread.daemon = True
