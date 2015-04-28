@@ -33,7 +33,7 @@ if __name__ == "__main__":
     	ws.send(msg)
     	
     def encode_router_status_notification(sn,msg):
-    	ws_obj_rsp = {"type":"api_notification"}                                                  
+    	ws_obj_rsp = {"type":"notification"}                                                  
     	ws_obj_rsp["wsid"] = 888                                                                  
     	ws_obj_rsp["from"] = sn
     	
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     logger.debug("mac is %s" % mac)
   
     logger.debug("ws create connection")
-    ws = websocket.create_connection("ws://182.92.232.157:8080")
+    ws = websocket.create_connection("ws://123.57.12.142:8080")
     #ws = websocket.create_connection("wss://ws-dev.ezlink-wifi.com:8888")
     #ws = websocket.create_connection("ws://60.206.36.142:8888/")
     #ws = websocket.create_connection("ws://60.206.137.246:3000/")
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 	encode_router_status_notification(sn,'路由器上线成功')
 	
     def encode_device_state_notification(sn,islogin,msg):
-    	ws_obj_rsp = {"type":"api_notification"}
+    	ws_obj_rsp = {"type":"notification"}
     	ws_obj_rsp["wsid"] = 888
     	ws_obj_rsp["from"] = sn 
     	
@@ -159,14 +159,14 @@ if __name__ == "__main__":
             logger.debug("json err")
             break
 
-        if ws_obj_req.has_key("type") and ws_obj_req['type'] == 'api_rest':
+        if ws_obj_req.has_key("type") and ws_obj_req['type'] == 'rest':
             data = ws_obj_req['data']
             if data['method']=='reboot':
     		encode_router_status_notification(sn,'路由器正在重启...')
     		
             api_json_rsp = api_call(data['apiclass'],data['method'],data['params'])
             api_obj_rsp = json.loads(api_json_rsp)
-            ws_obj_rsp = {"type":"api_router"}
+            ws_obj_rsp = {"type":"router"}
             ws_obj_rsp["data"] = api_obj_rsp['result']
             ws_obj_rsp["wsid"] = ws_obj_req['wsid']
             ws_obj_rsp["from"] = ws_obj_req['from']
