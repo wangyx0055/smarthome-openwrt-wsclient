@@ -67,52 +67,20 @@ if __name__ == "__main__":
         
     sn = sys.argv[1]
     mac = sys.argv[2]
+    dest = sys.argv[3]
 
     logger.debug("sn is %s" % sn)
     logger.debug("mac is %s" % mac)
-    
-    cnt=0
-    while True:
-    	lbps_req = {"method":"config","params":{"serviceType":2,"data":{"account":"ganzhi123","passwd":"abc","sn":"ganzhi123","ip":"172.17.18.228"}}}
-    	jdata = json.dumps(lbps_req)
-    	
-    	requrl = "http://123.57.154.84/lbps"
-    	req = urllib2.Request(requrl, jdata)
-    	res_data = urllib2.urlopen(req)
-    	
-    	res = res_data.read()
-    	#ret_obj = res_data.read()
-    	logger.debug("lbps res is < %s >",res )
-    	ret_obj = json.loads(res)
-    	
-    	if ret_obj.has_key("error"):
-    	    if ret_obj["error"]==0:
-    		if ret_obj.has_key("result"):
-    	    	    resdata = ret_obj["result"]
-    	    	    if resdata.has_key("cfgcode") and resdata["cfgcode"]==1:
-    		    	logger.debug("lbps resdata < %s >",resdata)
-    		    	host = resdata["host"]
-    		    	port = resdata["port"]
-    		    	path = resdata["path"]
-    		    	break
-    		else:
-    		    time.sleep(2)
-    		    time.sleep(2)
-    	    else:
-    		time.sleep(2)
-    	else:
-    		logger.debug("lbps res no error")
+    logger.debug("dest is %s" % dest)
   
     logger.debug("ws create connection")
     
-    dest = 'ws://'+host+':'+'%d'%port+'/'+path
-    logger.debug("ws create connection dest is < %s >",dest)
-    #ws = websocket.create_connection("ws://123.57.12.142:8080")
-    ws = websocket.create_connection(dest)
-
-    if not ws:
+    try:
+    	ws = websocket.create_connection(dest)
+    except:
         logger.debug("socket create failed")
-    #received = ws.recv()
+        os.system("cd /usr/lib/lua/dm && /usr/bin/lua /usr/lib/lua/dm/perception_lbps.lua")
+        exit()
     
     ws_access_obj_req = {"type":"auth","sn":sn,"mac":mac}
     ws.send(json.dumps(ws_access_obj_req))

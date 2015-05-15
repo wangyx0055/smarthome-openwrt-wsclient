@@ -20,16 +20,12 @@ logsize_limits(){
 logsize_limits
 
 # Probe the connection ability to the websocket server
-ip="123.57.12.142"
-#echo "`date`: Ping server ${ip} ...... " >> ${logfile}
-#ping -c 1 $ip 
-while [ $? == 1 ];
-do
-    sleep 5s
-    logsize_limits
-    echo "`date` : Ping server ${ip} again ...... " >> ${logfile}
-#    ping -c 1 $ip
-done
+url=`/sbin/uci get ezwrt.clsconfig.perceptionurl`
+if [ -n ${url} ]; then
+    echo "`date`: perception url is null,now execute lbps routine" >> ${logfile}
+    lbps=`cd /usr/lib/lua/dm;/usr/bin/lua /usr/lib/lua/dm/perception_lbps.lua` 
+    echo ${lbps} >> ${logfile}
+fi
 
 # If the websocket client is exist in local host
 process=`ps | grep ws_server.py`
@@ -39,7 +35,7 @@ result=`echo ${process} | grep -e "python /usr/sbin/ws_server.py*"`
 echo "`date`: sn = ${sn},mac = ${mac},relogin = ${relogin}" >> ${logfile}
 if [ -z "${result}" ] && [ -n "${sn}" ] && [ -n "${mac}" ]; then
     echo "`date`: Begin to launch websocket client ......" >> ${logfile}
-    $python ws_server.py ${sn} ${mac} ${relogin}
+    $python ws_server.py ${sn} ${mac} ${url}
     echo "`date`: Success to launch websocket client ......" >> ${logfile}
 fi
 

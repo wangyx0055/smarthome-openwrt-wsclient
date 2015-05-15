@@ -16,8 +16,6 @@ logsize_limits(){
 
 while true;
 do
-	sleep 20
-	
 	# Delete the logfile if the size of logfile exceed 512K
 	logsize_limits
 	
@@ -34,4 +32,6 @@ do
 		fi
 		echo "`date`: websocket client is normal" >> ${logfile}
 	fi
+	
+	sleep 60
 done
