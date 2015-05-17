@@ -21,7 +21,7 @@ logsize_limits
 
 # Probe the connection ability to the websocket server
 url=`/sbin/uci get ezwrt.clsconfig.perceptionurl`
-if [ -n ${url} ]; then
+if [ -z ${url} ]; then
     echo "`date`: perception url is null,now execute lbps routine" >> ${logfile}
     lbps=`cd /usr/lib/lua/dm;/usr/bin/lua /usr/lib/lua/dm/perception_lbps.lua` 
     echo ${lbps} >> ${logfile}
