@@ -44,10 +44,10 @@ if __name__ == "__main__":
     def send_msg(msg):
     	ws.send(msg)
     	
-    def encode_router_status_notification(sn,msg):
+    def encode_router_status_notification(idcode,msg):
     	ws_obj_rsp = {"type":"notification"}                                                  
     	ws_obj_rsp["wsid"] = 888                                                                  
-    	ws_obj_rsp["from"] = sn
+    	ws_obj_rsp["from"] = idcode
     	
     	data = {"msgtype":"reboot"}
     	data["message"] = msg
@@ -65,13 +65,19 @@ if __name__ == "__main__":
     	ws_json_rsp = json.dumps(ws_obj_rsp)
         send_msg(ws_json_rsp)
         
-    sn = sys.argv[1]
-    mac = sys.argv[2]
-    dest = sys.argv[3]
+    pppoeid = sys.argv[1]
+    passwd = sys.argv[2]
+    mac = sys.argv[3]
+    dest = sys.argv[4]
+    idcode = sys.argv[5]
+    wanip = sys.argv[6]
 
-    logger.debug("sn is %s" % sn)
+    logger.debug("idcode is %s" % idcode)
     logger.debug("mac is %s" % mac)
     logger.debug("dest is %s" % dest)
+    logger.debug("pppoeid is %s" % pppoeid)
+    logger.debug("passwd is %s" % passwd)
+    logger.debug("wanip is %s" % wanip)
   
     logger.debug("ws create connection")
     
@@ -82,7 +88,7 @@ if __name__ == "__main__":
         os.system("cd /usr/lib/lua/dm && /usr/bin/lua /usr/lib/lua/dm/perception_lbps.lua")
         exit()
     
-    ws_access_obj_req = {"type":"auth","sn":sn,"mac":mac}
+    ws_access_obj_req = {"type":"auth","idcode":idcode,"mac":mac}
     ws.send(json.dumps(ws_access_obj_req))
 
     received = ws.recv()
@@ -95,7 +101,7 @@ if __name__ == "__main__":
         exit()
     logger.debug("token is %s" % token)
 
-    ws_access_obj_req = {"type":"connect","token":token,"sn":sn,"c_type":"router"}
+    ws_access_obj_req = {"type":"connect","token":token,"idcode":idcode,"deviceIp":wanip,"pppoeId":pppoeid,"passwd":passwd,"c_type":"router"}
     ws.send(json.dumps(ws_access_obj_req))
 
     received = ws.recv()
@@ -108,12 +114,12 @@ if __name__ == "__main__":
         exit()
     else:
 	logger.debug("lizm connect response : '%s'" % message)
-	encode_router_status_notification(sn,'路由器上线成功')
+	encode_router_status_notification(idcode,'路由器上线成功')
 	
-    def encode_device_state_notification(sn,islogin,msg):
+    def encode_device_state_notification(idcode,islogin,msg):
     	ws_obj_rsp = {"type":"notification"}
     	ws_obj_rsp["wsid"] = 888
-    	ws_obj_rsp["from"] = sn 
+    	ws_obj_rsp["from"] = idcode 
     	
     	data = {"msgtype":"subdevstate"}
     	
@@ -148,7 +154,7 @@ if __name__ == "__main__":
             	if found == 0:
             		g_user_list.append(result)		
             		#logger.debug("Should notification mac  %s logger on",result["macaddr"])
-            		encode_device_state_notification(sn,"1",result)
+            		encode_device_state_notification(idcode,"1",result)
  			
             for j,y in enumerate(g_user_list):
             	found = 0 
@@ -159,7 +165,7 @@ if __name__ == "__main__":
             	if found == 0:
             		logger.debug("Should notification mac  %s logger off",y["macaddr"])
             		g_user_list.remove(y)
-            		encode_device_state_notification(sn,"0",y)
+            		encode_device_state_notification(idcode,"0",y)
             	
 #    	    logger.debug("send_notification end execute, and next loop after 3s ")
 
@@ -237,7 +243,7 @@ if __name__ == "__main__":
         if ws_obj_req.has_key("type") and ws_obj_req['type'] == 'rest':
             data = ws_obj_req['data']
             if data['method']=='reboot':
-    		encode_router_status_notification(sn,'路由器正在重启...')
+    		encode_router_status_notification(idcode,'路由器正在重启...')
     		encode_router_response(ws_obj_req['wsid'],ws_obj_req['from'],{},0)
     		#continue
     	    elif data['method']=='ping':

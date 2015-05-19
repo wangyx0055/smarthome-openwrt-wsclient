@@ -2,10 +2,25 @@
 
 #Process param
 relogin=${1}
-idcode=`/sbin/uci get network.wan.username`
-if [ -z ${idcode} ]; then
-	idcode=`cd /usr/lib/lua/dm ; lua /usr/lib/lua/dm/get_idcode.lua`
+
+# get pppoe username
+pppoeid=`/sbin/uci get network.wan.username`
+if [ -z ${pppoeid} ]; then
+    pppoeid=`cd /usr/lib/lua/dm ; lua /usr/lib/lua/dm/get_idcode.lua`
 fi
+
+# get pppoe passwd 
+password=`/sbin/uci get network.wan.password`
+if [ -z ${password} ]; then
+    password=`cd /usr/lib/lua/dm ; lua /usr/lib/lua/dm/get_idcode.lua`
+fi
+
+# get idcode 
+idcode=`cd /usr/lib/lua/dm ; lua /usr/lib/lua/dm/get_idcode.lua`
+
+# get wanip 
+wanip=`cd /usr/lib/lua/dm ; lua /usr/lib/lua/dm/get_wan_ip.lua`
+
 mac=`ifconfig eth0 | grep HWaddr | awk '{print $5}'`
 
 #Log File
@@ -36,10 +51,10 @@ process=`ps | grep ws_server.py`
 result=`echo ${process} | grep -e "python /usr/sbin/ws_server.py*"`
 
 # Launch local websocket client
-echo "`date`: idcode = ${idcode},mac = ${mac},relogin = ${relogin}" >> ${logfile}
+echo "`date`: pppoeid = ${pppoeid}, password = ${password}, mac = ${mac}, idcode = ${idcode}, wanip = ${wanip}, perceptionurl = ${url}, relogin = ${relogin}" >> ${logfile}
 if [ -z "${result}" ] && [ -n "${idcode}" ] && [ -n "${mac}" ]; then
     echo "`date`: Begin to launch websocket client ......" >> ${logfile}
-    $python ws_server.py ${idcode} ${mac} ${url}
+    $python ws_server.py ${pppoeid} ${password} ${mac} ${url} ${idcode} ${wanip}
     echo "`date`: Success to launch websocket client ......" >> ${logfile}
 fi
 
