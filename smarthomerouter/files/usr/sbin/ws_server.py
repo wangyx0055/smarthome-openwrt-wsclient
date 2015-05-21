@@ -136,13 +136,12 @@ if __name__ == "__main__":
     	while True:
     	    time.sleep(3)
     	    
-#    	    logger.debug("send_notification_thread begin execute ")
+    	    logger.debug("send_notification_thread routine ......")
     	    
             api_json_rsp = api_call("net","get_network_associate_list","")
             api_obj_rsp = json.loads(api_json_rsp)
             
             results = api_obj_rsp["result"]
-            #logger.debug("lizm: len(results) %d" , len(results))
             
             for result in results:
             	#logger.debug("result: mac = %s",result["macaddr"])
@@ -150,7 +149,7 @@ if __name__ == "__main__":
             	for i, x in enumerate(g_user_list):
             		if x["macaddr"] == result["macaddr"]:
             			found = 1
-            		break
+            			break
             	if found == 0:
             		g_user_list.append(result)		
             		#logger.debug("Should notification mac  %s logger on",result["macaddr"])
@@ -167,8 +166,6 @@ if __name__ == "__main__":
             		g_user_list.remove(y)
             		encode_device_state_notification(idcode,"0",y)
             	
-#    	    logger.debug("send_notification end execute, and next loop after 3s ")
-
     thread = threading.Thread(target=send_notification_thread)
     thread.daemon = True
     thread.start()
