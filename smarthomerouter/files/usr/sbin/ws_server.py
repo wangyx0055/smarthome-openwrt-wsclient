@@ -136,7 +136,7 @@ if __name__ == "__main__":
     	while True:
     	    time.sleep(3)
     	    
-    	    logger.debug("send_notification_thread routine ......")
+    	    #logger.debug("send_notification_thread routine ......")
     	    
             api_json_rsp = api_call("net","get_network_associate_list","")
             api_obj_rsp = json.loads(api_json_rsp)
@@ -152,7 +152,7 @@ if __name__ == "__main__":
             			break
             	if found == 0:
             		g_user_list.append(result)		
-            		#logger.debug("Should notification mac  %s logger on",result["macaddr"])
+            		logger.debug("Should notification mac  %s logger on",result["macaddr"])
             		encode_device_state_notification(idcode,"1",result)
  			
             for j,y in enumerate(g_user_list):
