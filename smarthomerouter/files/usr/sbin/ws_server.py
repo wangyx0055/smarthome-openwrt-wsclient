@@ -208,6 +208,13 @@ if __name__ == "__main__":
     				data["min"] = 0
     				data["avg"] = 0
     				data["max"] = 0
+			else:
+				data["transmitted"]= 0
+                        	data["received"]= 0
+                        	data["loss"]= ""
+                        	data["min"] = 0
+                        	data["avg"] = 0
+                        	data["max"] = 0
 		else:
 			data["transmitted"]= 0
                         data["received"]= 0

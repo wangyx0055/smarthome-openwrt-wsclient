@@ -27,8 +27,8 @@ do
 	result=`echo ${process} | grep -e "python /usr/sbin/ws_server.py*"`
 	
 	if [ -z "${result}" ] || [ ${proto} != ${tmpproto} ];then
-		proto=tmpproto
 		echo "`date`: websocket client is abnormal, current proto is ${tmpproto}, last proto is ${proto} ">> ${logfile}
+		proto=${tmpproto}
 		/usr/sbin/ws_kill.sh
 		/usr/sbin/ws_start.sh ${relogin} &
 	else
