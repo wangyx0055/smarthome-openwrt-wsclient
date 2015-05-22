@@ -212,8 +212,8 @@ if __name__ == "__main__":
 		
 		
     		encode_router_response(wsid,src,data,0)
-    		cmd = 'rm -rf '+filename
-    		os.system(cmd)
+    		#cmd = 'rm -rf '+filename
+    		#os.system(cmd)
     	else:
     		data["received"]=0
     		data["loss"]="0%"
