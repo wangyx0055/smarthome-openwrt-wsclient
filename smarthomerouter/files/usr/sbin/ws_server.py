@@ -192,24 +192,31 @@ if __name__ == "__main__":
         	content = fileHandle.readlines()
         	filelen = len(content)
         	#if len(content[filelen-1]) != 1:
-        	if content[filelen-1].split()[0] == "round-trip":
-        		data["min"] = string.atof(content[filelen-1].split()[3].split('/')[0])
-        		data["avg"] = string.atof(content[filelen-1].split()[3].split('/')[1])
-        		data["max"] = string.atof(content[filelen-1].split()[3].split('/')[2])
-        		if content[filelen-2].split()[2] == "transmitted,":
-        			data["transmitted"]=string.atoi(content[filelen-2].split()[0])
-        			data["received"]=string.atoi(content[filelen-2].split()[3])
-        			data["loss"]=content[filelen-2].split()[6]
-        	elif content[filelen-1].split()[2] == "transmitted,":
-        		data["transmitted"]=string.atoi(content[filelen-1].split()[0])
-        		data["received"]=string.atoi(content[filelen-1].split()[3])
-        		data["loss"]=content[filelen-1].split()[6]
-    			data["min"] = 0
-    			data["avg"] = 0
-    			data["max"] = 0
+		if filelen > 0:
+        		if content[filelen-1].split()[0] == "round-trip":
+        			data["min"] = string.atof(content[filelen-1].split()[3].split('/')[0])
+        			data["avg"] = string.atof(content[filelen-1].split()[3].split('/')[1])
+        			data["max"] = string.atof(content[filelen-1].split()[3].split('/')[2])
+        			if content[filelen-2].split()[2] == "transmitted,":
+        				data["transmitted"]=string.atoi(content[filelen-2].split()[0])
+        				data["received"]=string.atoi(content[filelen-2].split()[3])
+        				data["loss"]=content[filelen-2].split()[6]
+        		elif content[filelen-1].split()[2] == "transmitted,":
+        			data["transmitted"]=string.atoi(content[filelen-1].split()[0])
+        			data["received"]=string.atoi(content[filelen-1].split()[3])
+        			data["loss"]=content[filelen-1].split()[6]
+    				data["min"] = 0
+    				data["avg"] = 0
+    				data["max"] = 0
+		else:
+			data["transmitted"]= 0
+                        data["received"]= 0
+                        data["loss"]= ""
+                        data["min"] = 0
+                        data["avg"] = 0
+                        data["max"] = 0
         		
 		fileHandle.close()        		
-		
 		
     		encode_router_response(wsid,src,data,0)
     		#cmd = 'rm -rf '+filename
