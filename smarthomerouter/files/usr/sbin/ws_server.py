@@ -292,7 +292,7 @@ if __name__ == "__main__":
                 continue                                                           
             elif data['method']=='manualUpgrade':                                  
                 cnt=0                                                              
-                for line in os.popen("ps | grep aaa"):                             
+                for line in os.popen("ps | grep dmhandle"):                             
                         cnt=cnt+1                                                  
                 logger.debug("dmhandle process cnt is = %d",cnt)                   
                 if cnt<3:                                                         
