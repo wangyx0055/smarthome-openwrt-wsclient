@@ -235,6 +235,22 @@ if __name__ == "__main__":
     		data["avg"] = 0
     		data["max"] = 0
     		encode_router_response(wsid,src,data,0)
+
+    def get_version(wsid,src):                                                     
+        data = {"force_upgrade":"2"}                                               
+        tmp=os.popen("/sbin/uci get ezwrt.sysinfo.version")                        
+        data["version"] = tmp.read()                                               
+        tmp=os.popen("/sbin/uci get ezwrt.sysinfo.newest_ver")                     
+        data["newest_ver"] = tmp.read()                                            
+        tmp=os.popen("/sbin/uci get ezwrt.sysinfo.force_upgrade")                  
+        data["force_upgrade"] = tmp.read()                                         
+        tmp=os.popen("/sbin/uci get ezwrt.sysinfo.update_sum")                     
+        data["update_sum"] = tmp.read()                          
+        tmp=os.popen("/sbin/uci get ezwrt.sysinfo.update_url")   
+        data["update_url"] = tmp.read()                          
+        tmp=os.popen("/sbin/uci get ezwrt.sysinfo.suggestion_flow")
+        data["suggestion_url"] = tmp.read()                        
+        encode_router_response(wsid,src,data,0)
         		
     while True:
         logger.debug("waiting for websocket ...")
@@ -271,6 +287,18 @@ if __name__ == "__main__":
     	    	pingparam = data['params']
     	    	get_ping_result(ws_obj_req['wsid'],ws_obj_req['from'],pingparam[0])
     	    	continue
+	    elif data['method']=='getVersion':                                     
+                get_version(ws_obj_req['wsid'],ws_obj_req['from'])                 
+                continue                                                           
+            elif data['method']=='manualUpgrade':                                  
+                cnt=0                                                              
+                for line in os.popen("ps | grep aaa"):                             
+                        cnt=cnt+1                                                  
+                logger.debug("dmhandle process cnt is = %d",cnt)                   
+                if cnt<3:                                                         
+                       /usr/sbin/dmhandle &                                       
+                encode_router_response(ws_obj_req['wsid'],ws_obj_req['from'],{},0) 
+                continue
     	    	
             api_json_rsp = api_call(data['apiclass'],data['method'],data['params'])
             api_obj_rsp = json.loads(api_json_rsp)
