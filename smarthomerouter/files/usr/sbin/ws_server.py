@@ -296,7 +296,9 @@ if __name__ == "__main__":
                         cnt=cnt+1                                                  
                 logger.debug("dmhandle process cnt is = %d",cnt)                   
                 if cnt<3:                                                         
-                       os.system("/usr/sbin/dmhandle &")                                       
+        		os.system("cd /usr/lib/lua/dm && /usr/bin/lua /usr/lib/lua/dm/dm_ping.lua")
+    	    		time.sleep(10)
+                        os.system("/usr/sbin/dmhandle &")                                       
                 encode_router_response(ws_obj_req['wsid'],ws_obj_req['from'],{},0) 
                 continue
     	    	
