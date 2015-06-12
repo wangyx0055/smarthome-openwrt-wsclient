@@ -98,6 +98,7 @@ if __name__ == "__main__":
     token = ws_access_obj_rsp['token']
     if not token:
         logger.debug("token is null")
+        os.system("cd /usr/lib/lua/dm && /usr/bin/lua /usr/lib/lua/dm/perception_lbps.lua")
         exit()
     logger.debug("token is %s" % token)
 
@@ -111,6 +112,7 @@ if __name__ == "__main__":
     message = ws_access_obj_rsp['message']
     if message != 'connected':
         logger.debug("not connected")
+        os.system("cd /usr/lib/lua/dm && /usr/bin/lua /usr/lib/lua/dm/perception_lbps.lua")
         exit()
     else:
 	logger.debug("lizm connect response : '%s'" % message)
